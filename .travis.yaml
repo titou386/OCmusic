@@ -1,0 +1,15 @@
+language: python
+python:
+  - '3.6.9'
+
+before_script:
+  - pip3 install requirements.txt
+
+services:
+  - postgresql
+
+script:
+  - flake8 . --count --show-source --statistics
+  - sudo -u postgres -H -- psql -c 'CREATE DATABASE travisci;'
+  - python3 manage.py migrate
+  - python3 manage.py test

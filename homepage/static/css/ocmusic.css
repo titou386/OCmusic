@@ -1,0 +1,29 @@
+@charset "UTF-8";
+
+.cursive{
+    font-family: 'Grand Hotel';
+    text-transform: none;
+/*  font-size: 82px; */
+}
+
+.cover{
+    object-fit: contain;
+    width: 30rem;
+}
+
+.portfolio-item a{
+    color:  #212529;;
+    text-decoration: none;
+}
+
+.portfolio-item a:hover {
+    color:  #FFC800;
+    text-decoration: underline;
+}
+section#about {
+  background-color: #212529;
+  background: linear-gradient(to bottom, rgba(255, 255, 255, 0.7) 0%, rgba(255, 255, 255, 0.7) 100%), url("../assets/img/team-developer.jpg");
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: cover;
+}
