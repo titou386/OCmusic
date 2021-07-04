@@ -29,12 +29,12 @@
                 </button>
                 <div class="collapse navbar-collapse" id="navbarResponsive">
                     <ul class="navbar-nav ms-auto py-4 py-lg-0">
-                        <li class="nav-item"><a class="nav-link" href="#portfolio">Rechercher</a></li>
-                        <li class="nav-item"><a class="nav-link" href="#whats_up">Quoi de neuf ?</a></li>
-                        <li class="nav-item"><a class="nav-link" href="#about">A propos</a></li>
-                        <li class="nav-item"><a class="nav-link" href="#team">Notre équipe</a></li>
-                        <li class="nav-item"><a class="nav-link" href="#contact">Contact</a></li>
-                        <li class="nav-item"><a class="nav-link" href="#contact">Mon compte</a></li>
+                        <li class="nav-item"><a class="nav-link" href="{% url 'items' %}">Rechercher</a></li>
+                        <li class="nav-item"><a class="nav-link" href="{% url 'index' %}#whats_up">Quoi de neuf ?</a></li>
+                        <li class="nav-item"><a class="nav-link" href="{% url 'index' %}#about">A propos</a></li>
+                        <li class="nav-item"><a class="nav-link" href="{% url 'index' %}#team">Notre équipe</a></li>
+                        <li class="nav-item"><a class="nav-link" href="{% url 'index' %}#contact">Contact</a></li>
+                        <li class="nav-item"><a class="nav-link" href="/account/">Mon compte</a></li>
                     </ul>
                 </div>
             </div>

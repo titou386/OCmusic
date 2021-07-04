@@ -1,0 +1,83 @@
+{% extends 'homepage/base.html' %}
+{% load static %}
+{% block head %}
+<title>Accueil - OC Music</title>
+{% endblock %}
+
+{% block content %}
+        <!-- Masthead-->
+        <header class="masthead masthead-search tiny-masthead">
+            <div class="container">
+                <form id="searchForm" action="{% url 'search' %}">
+                    <div class="row align-items-stretch mb-5">
+                        <div class="form-group col-auto col-sm-5 col-sm-6 col-lg-7 col-xl-8">
+                                <!-- Query input-->
+                                <input class="form-control" id="query" name="query" type="text" value="{{ query }}" required />
+                            </div>
+                        <div class="col">
+                            <button class="btn btn-primary btn-xl text-uppercase custom-btn" id="submitButton" type="submit">Rechercher</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </header>
+        <section class="page-section bg-light">
+            {% for type_k, type_v in spotify.items %}
+            <div class="container mb-5">
+                <div class="text-center">
+                    <h2 class="section-heading text-uppercase">{{ type_k }} :</h2>
+                </div>
+                <div class="row text-center text-capitalize">
+                {% for item in type_v %}
+                    <div class="col-md-3 portfolio-item">
+                        {% if type_k == 'artists' %}
+                            <a class="portfolio-link" href="{% url 'artist-detail' %}{{ item.id }}">
+                        {% elif type_k == 'tracks' %}
+                            <a class="portfolio-link" href="{% url 'track-detail' %}{{ item.id }}">
+                        {% elif type_k == 'albums' %}
+                            <a class="portfolio-link" href="{% url 'album-detail' %}{{ item.id }}">
+                        {% endif %}                                                      
+                            <div class="portfolio-hover">
+                                <div class="portfolio-hover-content">
+                                    <i class="fas {% if type_k == 'artists' %}fa-user
+                                                  {% elif type_k == 'tracks' %}fa-music
+                                                  {% elif type_k == 'albums' %}fa-record-vinyl
+                                                  {% endif %} fa-3x">
+                                    </i>
+                                </div>
+                            </div>
+                            {% if item.images.large %}
+                                <img class="cover img-fluid" src="{{ item.images.large }}">
+                            {% else %}
+                                <img class="cover img-fluid" src="{% static 'assets/img/picture-unavaible-fr.png' %}">
+                            {% endif %}
+                        </a>
+                        {% if type_k != 'artists' %}
+                        <a href="{% url 'artist-detail' %}{{ item.artists_names.0.id }}">
+                            <h4 class="my-3">{{ item.artists_names.0.name }}</h4>
+                        </a>
+                        {% else %}
+                        <a href="{% url 'artist-detail' %}{{ item.id }}">
+                            <h4 class="my-3">{{ item.name }}</h4>
+                        </a>
+                        {% endif %}
+                        {% if type_k != 'artists' %}
+                        <a href="{% if type_k == 'tracks' %}
+                                     {% url 'track-detail' %}{{ item.id }}
+                                 {% elif type_k == 'albums' %}
+                                     {% url 'album-detail' %}{{ item.id }}
+                                 {% endif %}">
+                            <p><i class="fas {% if type_k == 'tracks' %}
+                                                 fa-music
+                                             {% elif type_k == 'albums' %}
+                                                 fa-record-vinyl
+                                             {% endif %}"></i> {{ item.name }}</p>
+                        </a>
+                        {% endif %}
+                    </div>
+                {% endfor %}
+                </div>
+            </div>
+        {% endfor %}
+        </section>
+{% endblock %}

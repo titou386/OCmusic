@@ -1,0 +1,28 @@
+{% extends 'homepage/base.html' %}
+{% load static %}
+{% block head %}
+<title>Accueil - OC Music</title>
+{% endblock %}
+
+{% block content %}
+        <!-- Masthead-->
+        <header class="masthead masthead-search">
+            <div class="container">
+                <div class="masthead-heading">Rechercher sur OC Music</div>
+                <form id="searchForm" action="{% url 'search' %}">
+                    <div class="row align-items-stretch mb-5">
+                        <div class="col"></div>
+                            <div class="form-group col-10 col-sm-8 col-6">
+                                <!-- Query input-->
+                                <input class="form-control" id="query" name="query" type="text" placeholder="Artiste ou Album ou Titre" required />
+                            </div>
+                        <div class="col"></div>
+                    </div>
+                    <div class="row align-items-stretch mb-5">
+                        <div class="col"></div>
+                        <div class="col-auto"><button class="btn btn-primary btn-xl text-uppercase" id="submitButton" type="submit">Rechercher</button></div>
+                    </div>
+                </form>
+            </div>
+        </header>
+{% endblock %}
