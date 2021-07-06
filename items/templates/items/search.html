@@ -1,7 +1,7 @@
 {% extends 'homepage/base.html' %}
 {% load static %}
 {% block head %}
-<title>Accueil - OC Music</title>
+<title>Search - OC Music</title>
 {% endblock %}
 
 {% block content %}
@@ -31,11 +31,11 @@
                 {% for item in type_v %}
                     <div class="col-md-3 portfolio-item">
                         {% if type_k == 'artists' %}
-                            <a class="portfolio-link" href="{% url 'artist-detail' %}{{ item.id }}">
+                            <a class="portfolio-link" href="{% if item.id %}{% url 'artist-details' artist_id=item.id %}{% endif %}">
                         {% elif type_k == 'tracks' %}
-                            <a class="portfolio-link" href="{% url 'track-detail' %}{{ item.id }}">
+                            <a class="portfolio-link" href="{% if item.id %}{% url 'track-details' track_id=item.id %}{% endif %}">
                         {% elif type_k == 'albums' %}
-                            <a class="portfolio-link" href="{% url 'album-detail' %}{{ item.id }}">
+                            <a class="portfolio-link" href="{% if item.id %}{% url 'album-details' album_id=item.id %}{% endif %}">
                         {% endif %}                                                      
                             <div class="portfolio-hover">
                                 <div class="portfolio-hover-content">
@@ -53,19 +53,19 @@
                             {% endif %}
                         </a>
                         {% if type_k != 'artists' %}
-                        <a href="{% url 'artist-detail' %}{{ item.artists_names.0.id }}">
-                            <h4 class="my-3">{{ item.artists_names.0.name }}</h4>
+                        <a href="{% if item.artists.0.id %}{% url 'artist-details' artist_id=item.artists.0.id %}{% endif %}">
+                            <h4 class="my-3">{{ item.artists.0.name }}</h4>
                         </a>
                         {% else %}
-                        <a href="{% url 'artist-detail' %}{{ item.id }}">
+                        <a href="{% if item.id %}{% url 'artist-details' artist_id=item.id %}{% endif %}">
                             <h4 class="my-3">{{ item.name }}</h4>
                         </a>
                         {% endif %}
                         {% if type_k != 'artists' %}
                         <a href="{% if type_k == 'tracks' %}
-                                     {% url 'track-detail' %}{{ item.id }}
+                                     {% if item.id %}{% url 'track-details' track_id=item.id %}{% endif %}
                                  {% elif type_k == 'albums' %}
-                                     {% url 'album-detail' %}{{ item.id }}
+                                     {% if item.id %}{% url 'album-details' album_id=item.id %}{% endif %}
                                  {% endif %}">
                             <p><i class="fas {% if type_k == 'tracks' %}
                                                  fa-music
