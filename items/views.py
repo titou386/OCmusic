@@ -45,6 +45,7 @@ class SearchView(Spotify, TemplateView):
         context["spotify"] = self.spotify.search(self.request.GET["query"], limit=8)
         return context
 
+
 class AlbumDetailsView(Spotify, TemplateView):
     template_name = "items/album_details.html"
 

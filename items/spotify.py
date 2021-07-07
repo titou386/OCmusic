@@ -71,8 +71,8 @@ class SpotifyAPI:
 
     def get_artist(self, ident):
         """Get an artist from an id."""
-        endpoint = "artists/"
-        
+#        endpoint = "artists/"
+
     def get_tracks(self, *ids, market='FR'):
         """Get multiple tracks from ids."""
         endpoint = "tracks"
@@ -109,7 +109,6 @@ class SpotifyAPI:
         if "images" in artist:
             artist_data["images"] = self.images_parser(artist["images"])
         return artist_data
-
 
     def albums_parser(self, data):
         albums = []
@@ -158,7 +157,8 @@ class SpotifyAPI:
             if tag in track:
                 track_dict[tag] = track[tag]
             try:
-                track_dict["duration_str"] = f'{int(track["duration_ms"]) // 60000}:{(int(track["duration_ms"]) % 60000 // 1000):02}'
+                track_dict["duration_str"] = \
+                    f'{int(track["duration_ms"]) // 60000}:{(int(track["duration_ms"]) % 60000 // 1000):02}'
             except(ValueError, KeyError):
                 pass
 

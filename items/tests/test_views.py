@@ -8,6 +8,7 @@ import os
 import datetime
 import json
 
+
 @patch.dict(os.environ, {"CLIENT_ID": "ABCDF", "CLIENT_SECRET": "12345"})
 class ViewsTestCase(TestCase):
     def setUp(self):
