@@ -11,14 +11,11 @@ class Spotify:
         spotify_session, created = SpotifySession.objects.get_or_create(
             client_id=os.getenv("CLIENT_ID")
         )
-        spotify_session.token_expires = spotify_session.token_expires.replace(
-            tzinfo=None
-        )
-        if (
-            created is False
-            and spotify_session.token_expires is not None
-            and datetime.datetime.now() < spotify_session.token_expires
-        ):
+        if spotify_session.token_expires:
+            spotify_session.token_expires = spotify_session.token_expires.replace(
+                tzinfo=None
+            )
+        if not created and datetime.datetime.now() < spotify_session.token_expires:
             self.spotify = SpotifyAPI(
                 client_id=os.getenv("CLIENT_ID"),
                 client_secret=os.getenv("CLIENT_SECRET"),
@@ -39,12 +36,19 @@ class Spotify:
             )
 
 
-class Search(Spotify, TemplateView):
+class SearchView(Spotify, TemplateView):
     template_name = "items/search.html"
-    context_object_name = "results"
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["query"] = self.request.GET["query"]
         context["spotify"] = self.spotify.search(self.request.GET["query"], limit=8)
+        return context
+
+class AlbumDetailsView(Spotify, TemplateView):
+    template_name = "items/album_details.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["spotify"] = self.spotify.get_album(self.kwargs["album_id"])
         return context

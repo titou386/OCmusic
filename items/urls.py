@@ -4,20 +4,20 @@ from . import views
 
 urlpatterns = [
     path("", TemplateView.as_view(template_name="items/index.html"), name="items"),
-    path("search/", views.Search.as_view(), name="search"),
+    path("search/", views.SearchView.as_view(), name="search"),
     path(
-        "artist/",
+        "artist/<str:artist_id>",
         TemplateView.as_view(template_name="items/index.html"),
-        name="artist-detail",
+        name="artist-details",
     ),
     path(
-        "album/",
-        TemplateView.as_view(template_name="items/index.html"),
-        name="album-detail",
+        "album/<str:album_id>",
+        views.AlbumDetailsView.as_view(),
+        name="album-details",
     ),
     path(
-        "track/",
+        "track/<str:track_id>",
         TemplateView.as_view(template_name="items/index.html"),
-        name="track-detail",
+        name="track-details",
     ),
 ]

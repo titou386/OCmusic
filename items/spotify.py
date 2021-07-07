@@ -2,13 +2,16 @@
 import datetime
 import requests
 import base64
+import logging
 
 from constants import SPOTIFY_AUTH, SPOTIFY_API
 from urllib.parse import urlencode
 
 
 class SpotifyAPI:
+    """Constructor."""
     def __init__(
+
         self,
         client_id,
         client_secret,
@@ -46,74 +49,127 @@ class SpotifyAPI:
                 raise Exception("Authorization failed.")
         return {"Authorization": f"{self.token_type} {self.access_token}"}
 
-    def search(self, query, search_type="album,track,artist", limit=5, offset=0):
+    def search(self, query, search_type="album,track,artist", market='FR', limit=5, offset=0):
+        """Searching any albums, tracks, artist from a string."""
         endpoint = "/search"
-        payload = {"q": query, "type": search_type, "limit": limit, "offset": offset}
+        payload = {"q": query, "type": search_type, "market": market, "limit": limit, "offset": offset}
         r = self.requester(f"{SPOTIFY_API}{endpoint}", payload)
         data = {}
         if "albums" in r:
-            data.update({"albums": self.albums_parser(r["albums"]["items"])})
+            data["albums"] = self.albums_parser(r["albums"]["items"])
         if "tracks" in r:
-            data.update({"tracks": self.tracks_parser(r["tracks"]["items"])})
+            data["tracks"] = self.tracks_parser(r["tracks"]["items"])
         if "artists" in r:
-            data.update({"artists": self.artists_parser(r["artists"]["items"])})
+            data["artists"] = self.artists_parser(r["artists"]["items"])
         return data
 
     def get_artists(self, *ids):
+        """Get multiple artists from ids."""
         endpoint = "artists"
         r = self.requester(f"{SPOTIFY_API}{endpoint}", {"ids": ",".join(ids)})
         return self.artists_parser(r["artists"])
 
-    def get_tracks(self, *ids):
+    def get_artist(self, ident):
+        """Get an artist from an id."""
+        endpoint = "artists/"
+        
+    def get_tracks(self, *ids, market='FR'):
+        """Get multiple tracks from ids."""
         endpoint = "tracks"
-        r = self.requester(f"{SPOTIFY_API}{endpoint}", {"ids": ",".join(ids)})
+        r = self.requester(f"{SPOTIFY_API}{endpoint}", {"ids": ",".join(ids), "market": market})
         return self.tracks_parser(r["tracks"])
 
-    def get_albums(self, *ids):
+    def get_track(self, ident, market='FR'):
+        """Get a track from an id."""
+        pass
+
+    def get_albums(self, *ids, market='FR'):
+        """Get multiple albums from ids."""
         endpoint = "albums"
-        r = self.requester(f"{SPOTIFY_API}{endpoint}", {"ids": ",".join(ids)})
-        return self.albums_parser(r["albums"])
+        r = self.requester(f"{SPOTIFY_API}{endpoint}", {"ids": ",".join(ids), "market": market})
+        return self.album_parser(r["albums"])
+
+    def get_album(self, ident, market='FR'):
+        """Get an album form an id."""
+        endpoint = "/albums/"
+        r = self.requester(f"{SPOTIFY_API}{endpoint}{ident}")
+        return self.album_parser(r)
 
     def artists_parser(self, data):
-        artist_lst = []
+        artists = []
         for artist in data:
-            artist_dict = {}
-            artist_dict.update({"id": artist["id"], "name": artist["name"]})
-            artist_dict.update({"images": self.images_parser(artist["images"])})
-            artist_lst.append(artist_dict)
-        return artist_lst
+            artists.append(self.artist_parser(artist))
+        return artists
+
+    def artist_parser(self, artist):
+        artist_data = {}
+        for tag in "id", "name":
+            if tag in artist:
+                artist_data[tag] = artist[tag]
+        if "images" in artist:
+            artist_data["images"] = self.images_parser(artist["images"])
+        return artist_data
+
 
     def albums_parser(self, data):
-        album_lst = []
+        albums = []
         for album in data:
-            album_dict = {}
+            albums.append(self.album_parser(album))
+        return albums
 
-            names = []
+    def album_parser(self, album):
+        album_data = {}
+        names = []
+        duration_total = 0
+
+        for tag in ("name", "id", "release_date", "total_tracks"):
+            if tag in album:
+                album_data[tag] = album[tag]
+
+        if "artists" in album:
             for artist in album["artists"]:
-                names.append({"id": artist["id"], "name": artist["name"]})
-            album_dict.update({"artists_names": names})
+                if "id" in artist and "name" in artist:
+                    names.append({"id": artist["id"], "name": artist["name"]})
+                album_data["artists"] = names
 
-            album_dict.update({"name": album["name"]})
-            album_dict.update({"id": album["id"]})
-            album_dict.update({"images": self.images_parser(album["images"])})
-            album_lst.append(album_dict)
-        return album_lst
+        if "tracks" in album and "items" in album["tracks"]:
+            album_data["tracks"] = self.tracks_parser(album["tracks"]["items"])
+            for track in album_data["tracks"]:
+                try:
+                    duration_total += int(track["duration_ms"])
+                    album_data["duration_min"] = duration_total // 60000
+                except(ValueError, KeyError):
+                    pass
+
+        if "images" in album:
+            album_data["images"] = self.images_parser(album["images"])
+        return album_data
 
     def tracks_parser(self, data):
-        track_lst = []
+        tracks = []
         for track in data:
-            track_dict = {}
+            tracks.append(self.track_parser(track))
+        return tracks
 
-            names = []
-            for artist in track["album"]["artists"]:
+    def track_parser(self, track):
+        track_dict = {}
+        names = []
+        for tag in ("name", "id", "duration_ms", "track_number"):
+            if tag in track:
+                track_dict[tag] = track[tag]
+            try:
+                track_dict["duration_str"] = f'{int(track["duration_ms"]) // 60000}:{(int(track["duration_ms"]) % 60000 // 1000):02}'
+            except(ValueError, KeyError):
+                pass
+
+        if "artists" in track:
+            for artist in track["artists"]:
                 names.append({"id": artist["id"], "name": artist["name"]})
-            track_dict.update({"artists_names": names})
-            track_dict.update({"images": self.images_parser(track["album"]["images"])})
+            track_dict["artists"] = names
 
-            track_dict.update({"name": track["name"]})
-            track_dict.update({"id": track["id"]})
-            track_lst.append(track_dict)
-        return track_lst
+        if "album" in track and "images" in track["album"]:
+            track_dict["images"] = self.images_parser(track["album"]["images"])
+        return track_dict
 
     def images_parser(self, img_lst):
         lower_limit = 200
@@ -122,24 +178,29 @@ class SpotifyAPI:
         try:
             for img in img_lst:
                 if img["height"] < lower_limit:
-                    img_dict.update({"small": img["url"]})
+                    img_dict["small"] = img["url"]
                 elif img["height"] > lower_limit and img["height"] < upper_limit:
-                    img_dict.update({"medium": img["url"]})
+                    img_dict["medium"] = img["url"]
                 elif img["height"] > upper_limit:
-                    img_dict.update({"large": img["url"]})
+                    img_dict["large"] = img["url"]
             return img_dict
-        except (KeyError):
+        except KeyError:
             return None
 
-    def requester(self, url, payload):
+    def requester(self, url, payload=None):
         try:
-            r = requests.get(
-                f"{url}?" + urlencode(payload), headers=self.get_auth_header()
-            )
+            if payload:
+                r = requests.get(
+                    f"{url}?" + urlencode(payload), headers=self.get_auth_header()
+                )
+            else:
+                r = requests.get(url, headers=self.get_auth_header())
             if not r.ok:
-                print(r.json())
-                return {"error": r.code_status}
-            return r.json()
+                logging.error(url)
+                logging.error(r.json())
+                return {"error": f"{r.status_code} - {r.json()['error']['message']}"}
         except ConnectionError as e:
-            print(e)
+            logging.error(e)
             return {"error": "no connection"}
+
+        return r.json()

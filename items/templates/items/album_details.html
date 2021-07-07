@@ -1,0 +1,86 @@
+{% extends 'homepage/base.html' %}
+{% load static %}
+{% block head %}
+<title>{{ spotify.name }} - OC Music Album</title>
+<style>
+    header.masthead-details {
+        height: 45vh;
+        padding-top: 10.5rem;
+        padding-bottom: 6rem;
+        text-align: center;
+        color: #fff;
+        background: linear-gradient(to bottom, rgba(0, 0, 0, 0.7) 0%, rgba(0, 0, 0, 0.7) 100%), url("{% if spotify.images.large %}{{spotify.images.large}}{% endif %}");
+        background-repeat: no-repeat;
+        background-attachment: fixed;
+        background-position: center center;
+        background-size: cover;
+}
+</style>
+{% endblock %}
+
+{% block content %}
+        <!-- Masthead-->
+        <header class="masthead masthead-details">
+            <div class="container">
+                <div class="masthead-heading m-0">{{ spotify.name }}</div>
+                <div class="masthead-subheading"><a class="text-white" href="{% url 'artist-details' artist_id=spotify.artists.0.id %}">{{ spotify.artists.0.name }}</a></div>
+            </div>
+        </header>
+        <section class="page-section bg-light pt-5">
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-4">
+                        <ul class="list-group list-group-flush">
+                          <li class="list-group-item">
+                            <div class="mx-auto" style="width: 300px;">
+                              {% if spotify.images.large %}
+                                <img class="cover img-fluid" src="{{ spotify.images.large }}">
+                              {% else %}
+                                <img class="cover img-fluid" src="{% static 'assets/img/picture-unavaible-fr.png' %}">
+                              {% endif %}
+                            </div>
+                          </li>
+                          {% if spotify.release_date %}
+                            <li class="list-group-item">Sortie : {{ spotify.release_date }}</li>
+                          {% endif %}
+                          {% if spotify.duration_min %}
+                            <li class="list-group-item">Durée  : {{ spotify.duration_min }}min</li>
+                          {% endif %}
+                          {% if spotify.total_tracks %}
+                            <li class="list-group-item">{{ spotify.total_tracks }} titres</li>
+                          {% endif %}
+                       </ul>                  
+                    </div>
+                    <div class="col-md-8">
+                        <table class="table table-striped">
+                            <thead>
+                              <tr>
+                                <th scope="col">Piste</th>
+                                <th scope="col">Titre</th>
+                                <th scope="col">Artiste</th>
+                                <th scope="col">Durée</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                            {% for track in spotify.tracks %}
+                              <tr>
+                                <th scope="row">{{ track.track_number }}</th>
+                                <td><a class="link-dark" href="{% url 'track-details' track_id=track.id %}">{{ track.name }}</a></td>
+                                <td><a class="link-dark" href="{% url 'artist-details' artist_id=track.artists.0.id %}">{{ track.artists.0.name }}</a></td>
+                                <td>{{ track.duration_str }}</td>
+                              </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <section class="page-section pt-5" id="comments">
+            <div class="container mb-5">
+                <div class="text-center">
+                    <h2 class="section-heading text-uppercase">Commentaires</h2>
+                </div>
+            </div>
+        </section>
+{% endblock %}
