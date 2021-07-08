@@ -7,7 +7,7 @@ urlpatterns = [
     path("search/", views.SearchView.as_view(), name="search"),
     path(
         "artist/<str:artist_id>",
-        TemplateView.as_view(template_name="items/index.html"),
+        views.ArtistDetailsView.as_view(),
         name="artist-details",
     ),
     path(

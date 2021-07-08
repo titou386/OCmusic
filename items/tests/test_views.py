@@ -23,3 +23,15 @@ class ViewsTestCase(TestCase):
         response = self.client.get(reverse("search"), {'query': 'test'})
         self.assertEqual(len(response.context_data['spotify']), 3)
         self.assertEqual(response.context_data['query'], 'test')
+
+    @patch.object(SpotifyAPI, 'requester',
+                  return_value=json.loads(open("items/tests/album.json").read()))
+    def test_album_view_context(self, *args):
+        response = self.client.get(reverse("album-details", kwargs={'album_id': 'hjskdfhjkd'}))
+        self.assertTrue(response.context_data['spotify']['name'])
+
+    @patch.object(SpotifyAPI, 'requester',
+                  return_value=json.loads(open("items/tests/search.json").read())['artists']['items'][0])
+    def test_artist_view_context(self, *args):
+        response = self.client.get(reverse("artist-details", kwargs={'artist_id': 'hjskdfhjkd'}))
+        self.assertTrue(response.context_data['spotify']['name'])

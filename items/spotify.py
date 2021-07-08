@@ -71,11 +71,46 @@ class SpotifyAPI:
 
     def get_artist(self, ident):
         """Get an artist from an id."""
-#        endpoint = "artists/"
+        endpoint = f"/artists/{ident}/"
+        r = self.requester(f"{SPOTIFY_API}{endpoint}")
+        return self.album_parser(r)
+
+    def get_top_tracks(self, ident, market='FR', limit=5):
+        """Get an Artist's Top Tracks."""
+        endpoint = f"/artists/{ident}/top-tracks"
+        r = self.requester(f"{SPOTIFY_API}{endpoint}", {"market": market})
+        if "tracks" in r:
+            data = self.tracks_parser(r["tracks"])
+            if isinstance(data, list):
+                return data[:limit]
+            else:
+                return data
+
+    def get_discography(self, ident, include_groups='album', market='FR', limit=5):
+        """Get Spotify catalog information about an artist’s albums."""
+        endpoint = f"/artists/{ident}/albums"
+        r = self.requester(f"{SPOTIFY_API}{endpoint}", {
+            "include_groups": include_groups,
+            "market": market,
+            "limit": limit
+        })
+        if "items" in r:
+            return self.albums_parser(r["items"])
+
+    def get_related_artists(self, ident, limit=5):
+        """Get an Artist's Related Artists."""
+        endpoint = f"/artists/{ident}/related-artists"
+        r = self.requester(f"{SPOTIFY_API}{endpoint}")
+        if "artists" in r:
+            data = self.artists_parser(r["artists"])
+            if isinstance(data, list):
+                return data[:limit]
+            else:
+                return data
 
     def get_tracks(self, *ids, market='FR'):
         """Get multiple tracks from ids."""
-        endpoint = "tracks"
+        endpoint = "/tracks"
         r = self.requester(f"{SPOTIFY_API}{endpoint}", {"ids": ",".join(ids), "market": market})
         return self.tracks_parser(r["tracks"])
 
@@ -85,14 +120,14 @@ class SpotifyAPI:
 
     def get_albums(self, *ids, market='FR'):
         """Get multiple albums from ids."""
-        endpoint = "albums"
+        endpoint = "/albums"
         r = self.requester(f"{SPOTIFY_API}{endpoint}", {"ids": ",".join(ids), "market": market})
         return self.album_parser(r["albums"])
 
     def get_album(self, ident, market='FR'):
         """Get an album form an id."""
-        endpoint = "/albums/"
-        r = self.requester(f"{SPOTIFY_API}{endpoint}{ident}")
+        endpoint = f"/albums/{ident}"
+        r = self.requester(f"{SPOTIFY_API}{endpoint}")
         return self.album_parser(r)
 
     def artists_parser(self, data):
@@ -121,7 +156,7 @@ class SpotifyAPI:
         names = []
         duration_total = 0
 
-        for tag in ("name", "id", "release_date", "total_tracks"):
+        for tag in "name", "id", "release_date", "total_tracks":
             if tag in album:
                 album_data[tag] = album[tag]
 
@@ -153,14 +188,14 @@ class SpotifyAPI:
     def track_parser(self, track):
         track_dict = {}
         names = []
-        for tag in ("name", "id", "duration_ms", "track_number"):
+        for tag in "name", "id", "duration_ms", "track_number":
             if tag in track:
                 track_dict[tag] = track[tag]
-            try:
-                track_dict["duration_str"] = \
-                    f'{int(track["duration_ms"]) // 60000}:{(int(track["duration_ms"]) % 60000 // 1000):02}'
-            except(ValueError, KeyError):
-                pass
+        try:
+            track_dict["duration_str"] = \
+                f'{int(track["duration_ms"]) // 60000}:{(int(track["duration_ms"]) % 60000 // 1000):02}'
+        except(ValueError, KeyError, TypeError):
+            pass
 
         if "artists" in track:
             for artist in track["artists"]:

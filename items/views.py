@@ -53,3 +53,16 @@ class AlbumDetailsView(Spotify, TemplateView):
         context = super().get_context_data(**kwargs)
         context["spotify"] = self.spotify.get_album(self.kwargs["album_id"])
         return context
+
+
+class ArtistDetailsView(Spotify, TemplateView):
+    template_name = "items/artist_details.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["spotify"] = self.spotify.get_artist(self.kwargs["artist_id"])
+        if "error" not in context["spotify"]:
+            context["spotify"]["top_tracks"] = self.spotify.get_top_tracks(self.kwargs["artist_id"])
+            context["spotify"]["discography"] = self.spotify.get_discography(self.kwargs["artist_id"], limit=6)
+            context["spotify"]["related"] = self.spotify.get_related_artists(self.kwargs["artist_id"], limit=6)
+        return context

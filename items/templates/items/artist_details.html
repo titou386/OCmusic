@@ -1,0 +1,128 @@
+{% extends 'homepage/base.html' %}
+{% load static %}
+{% block head %}
+<title>{{ spotify.name }} - OC Music Album</title>
+<style>
+    header.masthead-details {
+        height: 30vh;
+        padding-top: 10.5rem;
+        padding-bottom: 6rem;
+        text-align: center;
+        color: #fff;
+        background: linear-gradient(to bottom, rgba(0, 0, 0, 0.7) 0%, rgba(0, 0, 0, 0.7) 100%), url("{% if spotify.images.large %}{{spotify.images.large}}{% endif %}");
+        background-repeat: no-repeat;
+        background-attachment: fixed;
+        background-position: center center;
+        background-size: cover;
+}
+</style>
+{% endblock %}
+
+{% block content %}
+        <!-- Masthead-->
+        <header class="masthead masthead-details">
+            <div class="container">
+                <div class="masthead-heading m-0">{{ spotify.name }}</div>
+            </div>
+        </header>
+        <section class="page-section bg-light pt-5">
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-4">
+                        <ul class="list-group list-group-flush">
+                          <li class="list-group-item">
+                            <div class="mx-auto" style="width: 300px;">
+                              {% if spotify.images.large %}
+                                <img class="img-fluid" src="{{ spotify.images.large }}">
+                              {% else %}
+                                <img class="img-fluid" src="{% static 'assets/img/picture-unavaible-fr.png' %}">
+                              {% endif %}
+                            </div>
+                          </li>
+                        </ul>                  
+                    </div>
+                    <div class="col-md-8">
+                        <div class="text-center"><h3>Titres populaires</h3></div>
+                        <table class="table table-striped">
+                            <thead>
+                              <tr>
+                                <th scope="col">Piste</th>
+                                <th scope="col">Titre</th>
+                                <th scope="col">Artiste</th>
+                                <th scope="col">Durée</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                            {% for track in spotify.top_tracks %}
+                              <tr>
+                                <th scope="row">{{ forloop.counter }}</th>
+                                <td><a class="link-dark" href="{% if track.id %}{% url 'track-details' track_id=track.id %}{% endif %}">{{ track.name }}</a></td>
+                                <td><a class="link-dark" href="{% if track.artists.0.id %}{% url 'artist-details' artist_id=track.artists.0.id %}{% endif %}">{{ track.artists.0.name }}</a></td>
+                                <td>{{ track.duration_str }}</td>
+                              </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>                        
+                </div>
+                <div class="text-center"><h3>Discographie</h3></div>
+                <div class="row text-center">
+                    {% for album in spotify.discography %}
+                    <div class="col-md-2 portfolio-item">
+                        <a class="portfolio-link" href="{% if album.id %}{% url 'album-details' album_id=album.id %}{% endif %}">
+                            <div class="portfolio-hover">
+                                <div class="portfolio-hover-content">
+                                    <i class="fas fa-record-vinyl fa-3x">
+                                    </i>
+                                </div>
+                            </div>
+                            {% if album.images.large %}
+                            <img class="img-fluid" src="{{ album.images.medium }}">
+                            {% elif album.images.large %}
+                                <img class="img-fluid" src="{{ album.images.large }}">
+                            {% else %}
+                            <img class="img-fluid" src="{% static 'assets/img/picture-unavaible-fr.png' %}">
+                            {% endif %}
+                        </a>
+                        <p>
+                            <a href="{% if album.id %}{% url 'album-details' album_id=album.id %}{% endif %}">
+                             <i class="fas fa-record-vinyl"></i> {{ album.name }}
+                            </a>
+                        </p>
+                    </div>
+                    {% endfor %}
+                </div>   
+                <div class="row text-center">
+                    <h3>Artistes similaires</h3>
+                    {% for item in spotify.related %}
+                    <div class="col-md-2 portfolio-item">
+                        <a class="portfolio-link" href="{% if item.id %}{% url 'artist-details' artist_id=item.id %}{% endif %}">     <div class="portfolio-hover">
+                                <div class="portfolio-hover-content">
+                                    <i class="fas fa-user fa-3x">
+                                    </i>
+                                </div>
+                            </div>
+                            {% if item.images.medium %}
+                                <img class="img-fluid" src="{{ item.images.medium }}">
+                            {% elif item.images.large %}
+                                <img class="img-fluid" src="{{ item.images.large }}">
+                            {% else %}
+                                <img class="img-fluid" src="{% static 'assets/img/picture-unavaible-fr.png' %}">
+                            {% endif %}
+                        </a>
+                        <a href="{% if item.id %}{% url 'artist-details' artist_id=item.id %}{% endif %}">
+                            <h4 class="my-3">{{ item.name }}</h4>
+                        </a>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </section>
+        <section class="page-section pt-5" id="comments">
+            <div class="container mb-5">
+                <div class="text-center">
+                    <h2 class="section-heading text-uppercase">Commentaires</h2>
+                </div>
+            </div>
+        </section>
+{% endblock %}
