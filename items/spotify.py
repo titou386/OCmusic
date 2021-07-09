@@ -63,11 +63,13 @@ class SpotifyAPI:
             data["artists"] = self.artists_parser(r["artists"]["items"])
         return data
 
-    def get_artists(self, *ids):
-        """Get multiple artists from ids."""
-        endpoint = "artists"
+    def get_artists(self, ids):
+        """Get multiple artists from ids list."""
+        endpoint = "/artists"
         r = self.requester(f"{SPOTIFY_API}{endpoint}", {"ids": ",".join(ids)})
-        return self.artists_parser(r["artists"])
+        if "artists" in r:
+            return self.artists_parser(r["artists"])
+        return []
 
     def get_artist(self, ident):
         """Get an artist from an id."""
@@ -80,11 +82,8 @@ class SpotifyAPI:
         endpoint = f"/artists/{ident}/top-tracks"
         r = self.requester(f"{SPOTIFY_API}{endpoint}", {"market": market})
         if "tracks" in r:
-            data = self.tracks_parser(r["tracks"])
-            if isinstance(data, list):
-                return data[:limit]
-            else:
-                return data
+            return self.tracks_parser(r["tracks"])[:limit]
+        return []
 
     def get_discography(self, ident, include_groups='album', market='FR', limit=5):
         """Get Spotify catalog information about an artist’s albums."""
@@ -96,17 +95,15 @@ class SpotifyAPI:
         })
         if "items" in r:
             return self.albums_parser(r["items"])
+        return []
 
     def get_related_artists(self, ident, limit=5):
         """Get an Artist's Related Artists."""
         endpoint = f"/artists/{ident}/related-artists"
         r = self.requester(f"{SPOTIFY_API}{endpoint}")
         if "artists" in r:
-            data = self.artists_parser(r["artists"])
-            if isinstance(data, list):
-                return data[:limit]
-            else:
-                return data
+            return self.artists_parser(r["artists"])[:limit]
+        return []
 
     def get_tracks(self, *ids, market='FR'):
         """Get multiple tracks from ids."""
@@ -116,7 +113,9 @@ class SpotifyAPI:
 
     def get_track(self, ident, market='FR'):
         """Get a track from an id."""
-        pass
+        endpoint = f"/tracks/{ident}"
+        r = self.requester(f"{SPOTIFY_API}{endpoint}")
+        return self.track_parser(r)
 
     def get_albums(self, *ids, market='FR'):
         """Get multiple albums from ids."""
@@ -153,7 +152,6 @@ class SpotifyAPI:
 
     def album_parser(self, album):
         album_data = {}
-        names = []
         duration_total = 0
 
         for tag in "name", "id", "release_date", "total_tracks":
@@ -161,10 +159,7 @@ class SpotifyAPI:
                 album_data[tag] = album[tag]
 
         if "artists" in album:
-            for artist in album["artists"]:
-                if "id" in artist and "name" in artist:
-                    names.append({"id": artist["id"], "name": artist["name"]})
-                album_data["artists"] = names
+            album_data["artists"] = self.artists_parser(album["artists"])
 
         if "tracks" in album and "items" in album["tracks"]:
             album_data["tracks"] = self.tracks_parser(album["tracks"]["items"])
@@ -187,7 +182,6 @@ class SpotifyAPI:
 
     def track_parser(self, track):
         track_dict = {}
-        names = []
         for tag in "name", "id", "duration_ms", "track_number":
             if tag in track:
                 track_dict[tag] = track[tag]
@@ -198,12 +192,14 @@ class SpotifyAPI:
             pass
 
         if "artists" in track:
-            for artist in track["artists"]:
-                names.append({"id": artist["id"], "name": artist["name"]})
-            track_dict["artists"] = names
+            track_dict["artists"] = self.artists_parser(track["artists"])
+        if "album" in track:
+            track_dict["album"] = self.album_parser(track["album"])
+        try:
+            track_dict["images"] = track_dict["album"]["images"]
+        except KeyError:
+            pass
 
-        if "album" in track and "images" in track["album"]:
-            track_dict["images"] = self.images_parser(track["album"]["images"])
         return track_dict
 
     def images_parser(self, img_lst):

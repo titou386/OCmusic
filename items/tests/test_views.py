@@ -35,3 +35,8 @@ class ViewsTestCase(TestCase):
     def test_artist_view_context(self, *args):
         response = self.client.get(reverse("artist-details", kwargs={'artist_id': 'hjskdfhjkd'}))
         self.assertTrue(response.context_data['spotify']['name'])
+
+    @patch.object(SpotifyAPI, 'requester', return_value={"artists": []})
+    def test_track_view_context(self, *args):
+        response = self.client.get(reverse("track-details", kwargs={'track_id': 'hjskdfhjkd'}))
+        self.assertEqual(response.status_code, 200)

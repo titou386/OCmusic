@@ -17,7 +17,7 @@ urlpatterns = [
     ),
     path(
         "track/<str:track_id>",
-        TemplateView.as_view(template_name="items/index.html"),
+        views.TrackDetailsView.as_view(),
         name="track-details",
     ),
 ]
