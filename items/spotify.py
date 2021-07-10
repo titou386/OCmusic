@@ -105,11 +105,11 @@ class SpotifyAPI:
             return self.artists_parser(r["artists"])[:limit]
         return []
 
-    def get_tracks(self, *ids, market='FR'):
-        """Get multiple tracks from ids."""
-        endpoint = "/tracks"
-        r = self.requester(f"{SPOTIFY_API}{endpoint}", {"ids": ",".join(ids), "market": market})
-        return self.tracks_parser(r["tracks"])
+#    def get_tracks(self, *ids, market='FR'):
+#        """Get multiple tracks from ids."""
+#        endpoint = "/tracks"
+#        r = self.requester(f"{SPOTIFY_API}{endpoint}", {"ids": ",".join(ids), "market": market})
+#        return self.tracks_parser(r["tracks"])
 
     def get_track(self, ident, market='FR'):
         """Get a track from an id."""
@@ -117,11 +117,11 @@ class SpotifyAPI:
         r = self.requester(f"{SPOTIFY_API}{endpoint}")
         return self.track_parser(r)
 
-    def get_albums(self, *ids, market='FR'):
-        """Get multiple albums from ids."""
-        endpoint = "/albums"
-        r = self.requester(f"{SPOTIFY_API}{endpoint}", {"ids": ",".join(ids), "market": market})
-        return self.album_parser(r["albums"])
+#    def get_albums(self, *ids, market='FR'):
+#        """Get multiple albums from ids."""
+#        endpoint = "/albums"
+#        r = self.requester(f"{SPOTIFY_API}{endpoint}", {"ids": ",".join(ids), "market": market})
+#        return self.album_parser(r["albums"])
 
     def get_album(self, ident, market='FR'):
         """Get an album form an id."""
