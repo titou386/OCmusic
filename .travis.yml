@@ -6,7 +6,7 @@ before_script:
   - pip3 install -r requirements.txt
 
 env:
-  - DJANGO_SETTINGS_MODULE="OCmusic.settings.travis"
+  - DJANGO_SETTINGS_MODULE="ocmusic.settings.travis"
 
 services:
   - postgresql
