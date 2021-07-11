@@ -20,7 +20,7 @@ class SpotifyAPITestCase(TestCase):
     def test_related_artists(self):
         with requests_mock.Mocker() as m:
             m.get(f"{SPOTIFY_API}/artists/test/related-artists",
-                json={"artists": json.loads(open("items/tests/search.json").read())['artists']['items']})
+                  json={"artists": json.loads(open("items/tests/search.json").read())['artists']['items']})
 
             r = self.s.get_related_artists("test")
             self.assertEqual(len(r), 5)
