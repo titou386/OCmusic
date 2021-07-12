@@ -1,0 +1,60 @@
+{% extends 'homepage/base.html' %}
+{% load static %}
+{% block head %}
+{% if action == 'login' %}
+<title>Mon compte - OC Music</title>
+{% elif action == 'register' %}
+<title>Créer un compte - OC Music</title>
+{% endif %}
+
+{% endblock %}
+
+{% block content %}
+<header class="signup masthead masthead-auth">
+  <div class="container">
+    <div class="signup-content">
+      <div class="signup-form">
+        <div class="box-rounded col-5 p-5">
+          {% if action == 'login' %}
+          <h2 class="form-title text-center">Mon compte</h2>
+          {% elif action == 'register' %}
+          <h2 class="form-title text-center">Créer un compte</h2>
+          {% endif %}
+          {% if messages %}
+            <ul>
+              {% for message in messages %}
+                <li>{{ message }}</li>
+              {% endfor %}
+            </ul>
+          {% endif %}
+          <div id="content-main">
+            {% if user.is_authenticated %}
+              <p class="errornote">
+                Vous êtes authentifié en tant que {{ username }}, mais vous n'êtes pas autorisé
+                d'accéder à cette page.
+              </p>
+            {% endif %}
+            <form method="POST" class="register-form" id="register-form">{% csrf_token %}
+              <table class="mx-auto">
+                {{ form.as_table }}
+                <tr>
+                  <td></td>
+                  <td><input type="submit" name="submit" id="submit" class="form-submit btn btn-primary" value="Valider"></td>
+                </tr>
+                <tr>
+                  <td></td>
+                  {% if action == 'login' %}
+                  <td><a href="{% url 'sign-up' %}" class="text-white">Pas de compte ?</a></td>
+                  {% elif action == 'register' %}
+                  <td><a href="{% url 'sign-in' %}" class="text-white">J'ai déjà un compte</a></td>
+                  {% endif %}
+                </tr>
+              </table>      
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+{% endblock %}

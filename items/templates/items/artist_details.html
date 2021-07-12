@@ -77,9 +77,9 @@
                                 </div>
                             </div>
                             {% if album.images.medium %}
-                            <img class="img-fluid" src="{{ album.images.medium }}">
+                            <img class="img-fluid small-cover" src="{{ album.images.medium }}">
                             {% elif album.images.large %}
-                                <img class="img-fluid" src="{{ album.images.large }}">
+                                <img class="img-fluid small-cover" src="{{ album.images.large }}">
                             {% else %}
                             <img class="img-fluid" src="{% static 'assets/img/picture-unavaible-fr.png' %}">
                             {% endif %}
@@ -103,9 +103,9 @@
                                 </div>
                             </div>
                             {% if item.images.medium %}
-                                <img class="img-fluid" src="{{ item.images.medium }}">
+                                <img class="img-fluid small-cover" src="{{ item.images.medium }}">
                             {% elif item.images.large %}
-                                <img class="img-fluid" src="{{ item.images.large }}">
+                                <img class="img-fluid small-cover" src="{{ item.images.large }}">
                             {% else %}
                                 <img class="img-fluid" src="{% static 'assets/img/picture-unavaible-fr.png' %}">
                             {% endif %}

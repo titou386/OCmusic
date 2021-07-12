@@ -8,14 +8,15 @@ from items.models import SpotifySession
 
 class Spotify:
     def __init__(self):
-        spotify_session, created = SpotifySession.objects.get_or_create(
+        spotify_session = SpotifySession.objects.filter(
             client_id=os.getenv("CLIENT_ID")
-        )
-        if spotify_session.token_expires:
+        ).first()
+        if spotify_session:
             spotify_session.token_expires = spotify_session.token_expires.replace(
                 tzinfo=None
             )
-        if not created and datetime.datetime.now() < spotify_session.token_expires:
+
+        if spotify_session and datetime.datetime.now() < spotify_session.token_expires:
             self.spotify = SpotifyAPI(
                 client_id=os.getenv("CLIENT_ID"),
                 client_secret=os.getenv("CLIENT_SECRET"),
@@ -29,11 +30,19 @@ class Spotify:
                 client_secret=os.getenv("CLIENT_SECRET"),
             )
             self.spotify.auth()
-            SpotifySession.objects.filter(client_id=os.getenv("CLIENT_ID")).update(
-                access_token=self.spotify.access_token,
-                token_type=self.spotify.token_type,
-                token_expires=self.spotify.token_expires,
-            )
+            if spotify_session:
+                SpotifySession.objects.filter(client_id=os.getenv("CLIENT_ID")).update(
+                    access_token=self.spotify.access_token,
+                    token_type=self.spotify.token_type,
+                    token_expires=self.spotify.token_expires,
+                )
+            else:
+                spotify_session.objects.create(
+                    client_id=os.getenv("CLIENT_ID"),
+                    access_token=self.spotify.access_token,
+                    token_type=self.spotify.token_type,
+                    token_expires=self.spotify.token_expires,
+                ).save()
 
 
 class SearchView(Spotify, TemplateView):

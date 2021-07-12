@@ -3,3 +3,4 @@ flake8
 psycopg2-binary
 requests
 requests-mock
+selenium==3.141.0

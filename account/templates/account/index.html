@@ -1,0 +1,19 @@
+{% extends 'homepage/base.html' %}
+{% load static %}
+{% block head %}
+<title>{{ query }} - OC Music Search</title>
+{% endblock %}
+
+{% block content %}
+<!-- Masthead-->
+<header class="masthead masthead-account">
+  <div class="container">
+    <div class="row mb-5">
+      <div class="col">
+        <h1 class="mt-5">Bonjour, {{request.user.username}}.</h1>
+        <p><a class="text-white" href="{% url 'logout' %}">Déconnexion</a></p>
+      </div>
+    </div>
+  </div>
+</header>
+{% endblock %}
