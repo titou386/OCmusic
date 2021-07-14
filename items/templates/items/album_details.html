@@ -23,7 +23,7 @@
         <header class="masthead masthead-details">
             <div class="container">
                 <div class="masthead-heading m-0">{{ spotify.name }}</div>
-                <div class="masthead-subheading">{% for artist in spotify.artists %}{% if forloop.counter0 > 0 %}, {% endif %}<a class="text-white" href="{% if artist.id %}{% url 'artist-details' artist_id=artist.id %}">{{ artist.name }}{% endif %}</a>{% endfor %}</div>
+                <div class="masthead-subheading">{% for artist in spotify.artists %}{% if forloop.counter0 > 0 %}, {% endif %}<a class="text-white" href="{% if artist.id %}{% url 'artist-details' idx=artist.id %}">{{ artist.name }}{% endif %}</a>{% endfor %}</div>
             </div>
         </header>
         <section class="page-section bg-light pt-5">
@@ -65,8 +65,8 @@
                             {% for track in spotify.tracks %}
                               <tr>
                                 <th scope="row">{{ track.track_number }}</th>
-                                <td><a class="link-dark" href="{%if track.id %}{% url 'track-details' track_id=track.id %}{% endif %}">{{ track.name }}</a></td>
-                                <td>{% for artist in track.artists %}{% if forloop.counter0 > 0 %}, {% endif %}<a class="link-dark" href="{% if artist.id %}{% url 'artist-details' artist_id=artist.id %}">{{ artist.name }}{% endif %}</a>{% endfor %}</td>
+                                <td><a class="link-dark" href="{%if track.id %}{% url 'track-details' idx=track.id %}{% endif %}">{{ track.name }}</a></td>
+                                <td>{% for artist in track.artists %}{% if forloop.counter0 > 0 %}, {% endif %}<a class="link-dark" href="{% if artist.id %}{% url 'artist-details' idx=artist.id %}">{{ artist.name }}{% endif %}</a>{% endfor %}</td>
                                 <td>{{ track.duration_str }}</td>
                               </tr>
                             {% endfor %}
@@ -76,11 +76,5 @@
                 </div>
             </div>
         </section>
-        <section class="page-section pt-5" id="comments">
-            <div class="container mb-5">
-                <div class="text-center">
-                    <h2 class="section-heading text-uppercase">Commentaires</h2>
-                </div>
-            </div>
-        </section>
+        {% include 'items/comments.html' %}
 {% endblock %}

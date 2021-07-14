@@ -1,9 +1,10 @@
 import os
 import datetime
 
-from django.views.generic import TemplateView
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.views.generic import TemplateView, ListView, CreateView
 from items.spotify import SpotifyAPI
-from items.models import SpotifySession
+from items.models import SpotifySession, Comment
 
 
 class Spotify:
@@ -15,6 +16,7 @@ class Spotify:
             spotify_session.token_expires = spotify_session.token_expires.replace(
                 tzinfo=None
             )
+            spotify_session.token_expires += datetime.timedelta(hours=2)
 
         if spotify_session and datetime.datetime.now() < spotify_session.token_expires:
             self.spotify = SpotifyAPI(
@@ -45,6 +47,14 @@ class Spotify:
                 ).save()
 
 
+class CommentsView(ListView):
+    model = Comment
+    context_object_name = 'comments'
+
+    def get_queryset(self):
+        return super().get_queryset().filter(item=self.kwargs["idx"])
+
+
 class SearchView(Spotify, TemplateView):
     template_name = "items/search.html"
 
@@ -55,36 +65,42 @@ class SearchView(Spotify, TemplateView):
         return context
 
 
-class AlbumDetailsView(Spotify, TemplateView):
+class AlbumDetailsView(Spotify, CommentsView):
     template_name = "items/album_details.html"
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["spotify"] = self.spotify.get_album(self.kwargs["album_id"])
-
+        context["spotify"] = self.spotify.get_album(self.kwargs["idx"])
+        context["item_type"] = "album"
         return context
 
 
-class ArtistDetailsView(Spotify, TemplateView):
+class ArtistDetailsView(Spotify, CommentsView):
     template_name = "items/artist_details.html"
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["spotify"] = self.spotify.get_artist(self.kwargs["artist_id"])
+        context["spotify"] = self.spotify.get_artist(self.kwargs["idx"])
         if "error" not in context["spotify"]:
-            context["spotify"]["top_tracks"] = self.spotify.get_top_tracks(self.kwargs["artist_id"])
-            context["spotify"]["discography"] = self.spotify.get_discography(self.kwargs["artist_id"], limit=6)
-            context["spotify"]["related"] = self.spotify.get_related_artists(self.kwargs["artist_id"], limit=6)
+            context["spotify"]["top_tracks"] = self.spotify.get_top_tracks(self.kwargs["idx"])
+            context["spotify"]["discography"] = self.spotify.get_discography(self.kwargs["idx"], limit=6)
+            context["spotify"]["related"] = self.spotify.get_related_artists(self.kwargs["idx"], limit=6)
+        context["item_type"] = "artist"
         return context
 
 
-class TrackDetailsView(Spotify, TemplateView):
+class TrackDetailsView(Spotify, CommentsView):
     template_name = "items/track_details.html"
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["spotify"] = self.spotify.get_track(self.kwargs["track_id"])
+        context["spotify"] = self.spotify.get_track(self.kwargs["idx"])
         if "artists" in context["spotify"]:
             context["spotify"]["artists"] = self.spotify.get_artists(
                 [artist["id"] for artist in context["spotify"]["artists"]])
+        context["item_type"] = "track"
         return context
+
+
+class CommentCreateView(LoginRequiredMixin, CreateView):
+    pass

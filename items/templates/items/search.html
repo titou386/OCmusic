@@ -8,7 +8,7 @@
         <!-- Masthead-->
         <header class="masthead masthead-search tiny-masthead">
             <div class="container">
-                <form id="searchForm" action="{% url 'search' %}">
+                <form id="searchForm" action="{% url 'items-search' %}">
                     <div class="row align-items-stretch mb-5">
                         <div class="form-group col-auto col-sm-5 col-sm-6 col-lg-7 col-xl-8">
                                 <!-- Query input-->
@@ -31,11 +31,11 @@
                 {% for item in type_v %}
                     <div class="col-md-3 portfolio-item">
                         {% if type_k == 'artists' %}
-                            <a class="portfolio-link" href="{% if item.id %}{% url 'artist-details' artist_id=item.id %}{% endif %}">
+                            <a class="portfolio-link" href="{% if item.id %}{% url 'artist-details' idx=item.id %}{% endif %}">
                         {% elif type_k == 'tracks' %}
-                            <a class="portfolio-link" href="{% if item.id %}{% url 'track-details' track_id=item.id %}{% endif %}">
+                            <a class="portfolio-link" href="{% if item.id %}{% url 'track-details' idx=item.id %}{% endif %}">
                         {% elif type_k == 'albums' %}
-                            <a class="portfolio-link" href="{% if item.id %}{% url 'album-details' album_id=item.id %}{% endif %}">
+                            <a class="portfolio-link" href="{% if item.id %}{% url 'album-details' idx=item.id %}{% endif %}">
                         {% endif %}                                                      
                             <div class="portfolio-hover">
                                 <div class="portfolio-hover-content">
@@ -53,19 +53,19 @@
                             {% endif %}
                         </a>
                         {% if type_k != 'artists' %}
-                        <a href="{% if item.artists.0.id %}{% url 'artist-details' artist_id=item.artists.0.id %}{% endif %}">
+                        <a href="{% if item.artists.0.id %}{% url 'artist-details' idx=item.artists.0.id %}{% endif %}">
                             <h4 class="my-3">{{ item.artists.0.name }}</h4>
                         </a>
                         {% else %}
-                        <a href="{% if item.id %}{% url 'artist-details' artist_id=item.id %}{% endif %}">
+                        <a href="{% if item.id %}{% url 'artist-details' idx=item.id %}{% endif %}">
                             <h4 class="my-3">{{ item.name }}</h4>
                         </a>
                         {% endif %}
                         {% if type_k != 'artists' %}
                         <a href="{% if type_k == 'tracks' %}
-                                     {% if item.id %}{% url 'track-details' track_id=item.id %}{% endif %}
+                                     {% if item.id %}{% url 'track-details' idx=item.id %}{% endif %}
                                  {% elif type_k == 'albums' %}
-                                     {% if item.id %}{% url 'album-details' album_id=item.id %}{% endif %}
+                                     {% if item.id %}{% url 'album-details' idx=item.id %}{% endif %}
                                  {% endif %}">
                             <p><i class="fas {% if type_k == 'tracks' %}
                                                  fa-music

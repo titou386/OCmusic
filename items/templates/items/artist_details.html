@@ -56,8 +56,8 @@
                             {% for track in spotify.top_tracks %}
                               <tr>
                                 <th scope="row">{{ forloop.counter }}</th>
-                                <td><a class="link-dark" href="{% if track.id %}{% url 'track-details' track_id=track.id %}{% endif %}">{{ track.name }}</a></td>
-                                <td><a class="link-dark" href="{% if track.artists.0.id %}{% url 'artist-details' artist_id=track.artists.0.id %}{% endif %}">{{ track.artists.0.name }}</a></td>
+                                <td><a class="link-dark" href="{% if track.id %}{% url 'track-details' idx=track.id %}{% endif %}">{{ track.name }}</a></td>
+                                <td>{% for artist in track.artists %}<a class="link-dark" href="{% if artist.id %}{% url 'artist-details' idx=artist.id %}{% endif %}">{% if forloop.counter0 > 0 %}, {% endif %}{{ artist.name }}</a>{% endfor %}</td>
                                 <td>{{ track.duration_str }}</td>
                               </tr>
                             {% endfor %}
@@ -69,7 +69,7 @@
                 <div class="row text-center">
                     {% for album in spotify.discography %}
                     <div class="col-md-2 portfolio-item">
-                        <a class="portfolio-link" href="{% if album.id %}{% url 'album-details' album_id=album.id %}{% endif %}">
+                        <a class="portfolio-link" href="{% if album.id %}{% url 'album-details' idx=album.id %}{% endif %}">
                             <div class="portfolio-hover">
                                 <div class="portfolio-hover-content">
                                     <i class="fas fa-record-vinyl fa-3x">
@@ -85,7 +85,7 @@
                             {% endif %}
                         </a>
                         <p>
-                            <a href="{% if album.id %}{% url 'album-details' album_id=album.id %}{% endif %}">
+                            <a href="{% if album.id %}{% url 'album-details' idx=album.id %}{% endif %}">
                              <i class="fas fa-record-vinyl"></i> {{ album.name }}
                             </a>
                         </p>
@@ -96,7 +96,7 @@
                     <h3>Artistes similaires</h3>
                     {% for item in spotify.related %}
                     <div class="col-md-2 portfolio-item">
-                        <a class="portfolio-link" href="{% if item.id %}{% url 'artist-details' artist_id=item.id %}{% endif %}">     <div class="portfolio-hover">
+                        <a class="portfolio-link" href="{% if item.id %}{% url 'artist-details' idx=item.id %}{% endif %}">     <div class="portfolio-hover">
                                 <div class="portfolio-hover-content">
                                     <i class="fas fa-user fa-3x">
                                     </i>
@@ -110,7 +110,7 @@
                                 <img class="img-fluid" src="{% static 'assets/img/picture-unavaible-fr.png' %}">
                             {% endif %}
                         </a>
-                        <a href="{% if item.id %}{% url 'artist-details' artist_id=item.id %}{% endif %}">
+                        <a href="{% if item.id %}{% url 'artist-details' idx=item.id %}{% endif %}">
                             <h4 class="my-3">{{ item.name }}</h4>
                         </a>
                     </div>
@@ -118,11 +118,5 @@
                 </div>
             </div>
         </section>
-        <section class="page-section pt-5" id="comments">
-            <div class="container mb-5">
-                <div class="text-center">
-                    <h2 class="section-heading text-uppercase">Commentaires</h2>
-                </div>
-            </div>
-        </section>
+        {% include 'items/comments.html' %}
 {% endblock %}
