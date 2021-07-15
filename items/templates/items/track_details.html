@@ -9,7 +9,7 @@
         padding-bottom: 6rem;
         text-align: center;
         color: #fff;
-        background: linear-gradient(to bottom, rgba(0, 0, 0, 0.7) 0%, rgba(0, 0, 0, 0.7) 100%), url("{% if spotify.images.large %}{{spotify.images.large}}{% endif %}");
+        background: linear-gradient(to bottom, rgba(0, 0, 0, 0.7) 0%, rgba(0, 0, 0, 0.7) 100%), url("{% if spotify.album.images.large %}{{spotify.album.images.large}}{% endif %}");
         background-repeat: no-repeat;
         background-attachment: fixed;
         background-position: center center;
@@ -40,8 +40,8 @@
                                 </div>
                             </div>
                             <div class="mx-auto" style="width: 300px;">
-                              {% if spotify.images.large %}
-                                <img class="cover img-fluid" src="{{ spotify.images.large }}">
+                              {% if spotify.album.images.large %}
+                                <img class="cover img-fluid" src="{{ spotify.album.images.large }}">
                               {% else %}
                                 <img class="cover img-fluid" src="{% static 'assets/img/picture-unavaible-fr.png' %}">
                               {% endif %}

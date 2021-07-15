@@ -46,10 +46,18 @@
                                     </i>
                                 </div>
                             </div>
-                            {% if item.images.large %}
-                                <img class="cover img-fluid" src="{{ item.images.large }}">
+                            {% if type_k == 'tracks' %}
+                                {% if item.album.images.large %}
+                                    <img class="cover img-fluid" src="{{ item.album.images.large }}">
+                                {% else %}
+                                    <img class="cover img-fluid" src="{% static 'assets/img/picture-unavaible-fr.png' %}">
+                                {% endif %}
                             {% else %}
-                                <img class="cover img-fluid" src="{% static 'assets/img/picture-unavaible-fr.png' %}">
+                                {% if item.images.large %}
+                                    <img class="cover img-fluid" src="{{ item.images.large }}">
+                                {% else %}
+                                    <img class="cover img-fluid" src="{% static 'assets/img/picture-unavaible-fr.png' %}">
+                                {% endif %}
                             {% endif %}
                         </a>
                         {% if type_k != 'artists' %}

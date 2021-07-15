@@ -13,11 +13,11 @@ class IndexView(LoginRequiredMixin, TemplateView):
 class SignInView(LoginView):
     template_name = "account/auth.html"
     form_class = LoginForm
-    success_url = '/account/'
+    success_url = "/account/"
 
     def dispatch(self, request, *args, **kwargs):
         if request.user.is_authenticated:
-            return redirect('account')
+            return redirect("account")
         return super().dispatch(request, *args, **kwargs)
 
     def get_context_data(self, **kwargs):
@@ -29,11 +29,11 @@ class SignInView(LoginView):
 class SignUpView(CreateView):
     template_name = "account/auth.html"
     form_class = RegisterForm
-    success_url = '/account/'
+    success_url = "/account/"
 
     def dispatch(self, request, *args, **kwargs):
         if request.user.is_authenticated:
-            return redirect('account')
+            return redirect("account")
         return super().dispatch(request, *args, **kwargs)
 
     def get_context_data(self, **kwargs):

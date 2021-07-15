@@ -1,7 +1,7 @@
 from django.test import TestCase
 from unittest.mock import patch
 from django.urls import reverse
-from items.spotify import SpotifyAPI
+from items.services import SpotifyAPI
 from items.models import SpotifySession
 from constants import SPOTIFY_AUTH
 from items.views import Spotify
@@ -19,29 +19,48 @@ class ViewsSuccessTestCase(TestCase):
             client_id="ABCDF",
             access_token="NgCXRKcMzYjw",
             token_type="bearer",
-            token_expires=datetime.datetime.now() + datetime.timedelta(seconds=3600))
+            token_expires=datetime.datetime.now() + datetime.timedelta(seconds=3600),
+        )
 
-    @patch.object(SpotifyAPI, 'requester', return_value=json.loads(open("items/tests/search.json").read()))
+    @patch.object(
+        SpotifyAPI,
+        "requester",
+        return_value=json.loads(open("items/tests/search.json").read()),
+    )
     def test_search_view_context(self, *args):
-        response = self.client.get(reverse("search"), {'query': 'test'})
-        self.assertEqual(len(response.context_data['spotify']), 3)
-        self.assertEqual(response.context_data['query'], 'test')
+        response = self.client.get(reverse("items-search"), {"query": "test"})
+        self.assertEqual(len(response.context_data["spotify"]), 3)
+        self.assertEqual(response.context_data["query"], "test")
 
-    @patch.object(SpotifyAPI, 'requester',
-                  return_value=json.loads(open("items/tests/album.json").read()))
+    @patch.object(
+        SpotifyAPI,
+        "requester",
+        return_value=json.loads(open("items/tests/album.json").read()),
+    )
     def test_album_view_context(self, *args):
-        response = self.client.get(reverse("album-details", kwargs={'album_id': 'hjskdfhjkd'}))
-        self.assertTrue(response.context_data['spotify']['name'])
+        response = self.client.get(
+            reverse("album-details", kwargs={"idx": "hjskdfhjkd"})
+        )
+        self.assertTrue(response.context_data["spotify"]["name"])
 
-    @patch.object(SpotifyAPI, 'requester',
-                  return_value=json.loads(open("items/tests/search.json").read())['artists']['items'][0])
+    @patch.object(
+        SpotifyAPI,
+        "requester",
+        return_value=json.loads(open("items/tests/search.json").read())["artists"][
+            "items"
+        ][0],
+    )
     def test_artist_view_context(self, *args):
-        response = self.client.get(reverse("artist-details", kwargs={'artist_id': 'hjskdfhjkd'}))
-        self.assertTrue(response.context_data['spotify']['name'])
+        response = self.client.get(
+            reverse("artist-details", kwargs={"idx": "hjskdfhjkd"})
+        )
+        self.assertTrue(response.context_data["spotify"]["name"])
 
-    @patch.object(SpotifyAPI, 'requester', return_value={"artists": []})
+    @patch.object(SpotifyAPI, "requester", return_value={"artists": []})
     def test_track_view_context(self, *args):
-        response = self.client.get(reverse("track-details", kwargs={'track_id': 'hjskdfhjkd'}))
+        response = self.client.get(
+            reverse("track-details", kwargs={"idx": "hjskdfhjkd"})
+        )
         self.assertEqual(response.status_code, 200)
 
 
@@ -52,15 +71,19 @@ class RenewTokenTestCase(TestCase):
             client_id="ABCDF",
             access_token="NgCXRKcMzYjw",
             token_type="bearer",
-            token_expires=datetime.datetime.now())
+            token_expires=datetime.datetime.now(),
+        )
 
     def test_success_renew_token(self):
         with requests_mock.Mocker() as m:
-            m.post(SPOTIFY_AUTH, json={
-                "access_token": "kfdgGL54dleGE4SQh",
-                "token_type": "bearer",
-                "expires_in": 3600,
-            })
+            m.post(
+                SPOTIFY_AUTH,
+                json={
+                    "access_token": "kfdgGL54dleGE4SQh",
+                    "token_type": "bearer",
+                    "expires_in": 3600,
+                },
+            )
 
             s = Spotify()
             self.assertEqual(s.spotify.access_token, "kfdgGL54dleGE4SQh")

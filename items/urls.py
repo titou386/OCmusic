@@ -23,6 +23,6 @@ urlpatterns = [
     path(
         "<str:item_type>/<str:idx>/comment/save/",
         views.CommentCreateView.as_view(),
-        name="comment-save",
+        name="comment-create",
     ),
 ]
