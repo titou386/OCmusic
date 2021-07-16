@@ -15,57 +15,127 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.CreateModel(
-            name='Item',
+            name="Item",
             fields=[
-                ('idx', models.CharField(max_length=32, primary_key=True, serialize=False)),
-                ('name', models.CharField(max_length=128)),
-                ('like', models.ManyToManyField(related_name='liked', to=settings.AUTH_USER_MODEL)),
+                (
+                    "idx",
+                    models.CharField(max_length=32, primary_key=True, serialize=False),
+                ),
+                ("name", models.CharField(max_length=128)),
+                (
+                    "like",
+                    models.ManyToManyField(
+                        related_name="liked", to=settings.AUTH_USER_MODEL
+                    ),
+                ),
             ],
         ),
         migrations.CreateModel(
-            name='SpotifySession',
+            name="SpotifySession",
             fields=[
-                ('client_id', models.CharField(max_length=32, primary_key=True, serialize=False)),
-                ('access_token', models.CharField(blank=True, max_length=100, null=True)),
-                ('token_type', models.CharField(blank=True, max_length=10, null=True)),
-                ('token_expires', models.DateTimeField(auto_now=True)),
+                (
+                    "client_id",
+                    models.CharField(max_length=32, primary_key=True, serialize=False),
+                ),
+                (
+                    "access_token",
+                    models.CharField(blank=True, max_length=100, null=True),
+                ),
+                ("token_type", models.CharField(blank=True, max_length=10, null=True)),
+                ("token_expires", models.DateTimeField(auto_now=True)),
             ],
         ),
         migrations.CreateModel(
-            name='Album',
+            name="Album",
             fields=[
-                ('item', models.OneToOneField(on_delete=django.db.models.deletion.CASCADE, primary_key=True, serialize=False, to='items.item')),
-                ('small_img', models.CharField(max_length=128, null=True)),
-                ('medium_img', models.CharField(max_length=128, null=True)),
-                ('large_img', models.CharField(max_length=128, null=True)),
+                (
+                    "item",
+                    models.OneToOneField(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        primary_key=True,
+                        serialize=False,
+                        to="items.item",
+                    ),
+                ),
+                ("small_img", models.CharField(max_length=128, null=True)),
+                ("medium_img", models.CharField(max_length=128, null=True)),
+                ("large_img", models.CharField(max_length=128, null=True)),
             ],
         ),
         migrations.CreateModel(
-            name='Artist',
+            name="Artist",
             fields=[
-                ('item', models.OneToOneField(on_delete=django.db.models.deletion.CASCADE, primary_key=True, serialize=False, to='items.item')),
-                ('small_img', models.CharField(max_length=128, null=True)),
-                ('medium_img', models.CharField(max_length=128, null=True)),
-                ('large_img', models.CharField(max_length=128, null=True)),
-                ('album', models.ManyToManyField(related_name='compositor', to='items.Album')),
+                (
+                    "item",
+                    models.OneToOneField(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        primary_key=True,
+                        serialize=False,
+                        to="items.item",
+                    ),
+                ),
+                ("small_img", models.CharField(max_length=128, null=True)),
+                ("medium_img", models.CharField(max_length=128, null=True)),
+                ("large_img", models.CharField(max_length=128, null=True)),
+                (
+                    "album",
+                    models.ManyToManyField(related_name="compositor", to="items.Album"),
+                ),
             ],
         ),
         migrations.CreateModel(
-            name='Comment',
+            name="Comment",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('text', models.TextField()),
-                ('created_datetime', models.DateTimeField(auto_now_add=True)),
-                ('item', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='items.item')),
-                ('published_by', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL)),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("text", models.TextField()),
+                ("created_datetime", models.DateTimeField(auto_now_add=True)),
+                (
+                    "item",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE, to="items.item"
+                    ),
+                ),
+                (
+                    "published_by",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to=settings.AUTH_USER_MODEL,
+                    ),
+                ),
             ],
         ),
         migrations.CreateModel(
-            name='Track',
+            name="Track",
             fields=[
-                ('item', models.OneToOneField(on_delete=django.db.models.deletion.CASCADE, primary_key=True, serialize=False, to='items.item')),
-                ('album', models.ForeignKey(null=True, on_delete=django.db.models.deletion.CASCADE, to='items.album')),
-                ('artist', models.ManyToManyField(related_name='singer', to='items.Artist')),
+                (
+                    "item",
+                    models.OneToOneField(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        primary_key=True,
+                        serialize=False,
+                        to="items.item",
+                    ),
+                ),
+                (
+                    "album",
+                    models.ForeignKey(
+                        null=True,
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to="items.album",
+                    ),
+                ),
+                (
+                    "artist",
+                    models.ManyToManyField(related_name="singer", to="items.Artist"),
+                ),
             ],
         ),
     ]

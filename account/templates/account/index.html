@@ -1,12 +1,12 @@
 {% extends 'homepage/base.html' %}
 {% load static %}
 {% block head %}
-<title>{{ query }} - OC Music Search</title>
+<title>Mon compte - OC Music</title>
 {% endblock %}
 
 {% block content %}
 <!-- Masthead-->
-<header class="masthead masthead-account">
+<header class="masthead masthead-account tiny-masthead">
   <div class="container">
     <div class="row mb-5">
       <div class="col">
@@ -16,4 +16,5 @@
     </div>
   </div>
 </header>
+{% include 'account/favorites_list.html' %}
 {% endblock %}

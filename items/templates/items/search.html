@@ -67,27 +67,23 @@
                                 {% endif %}
                             {% endif %}
                         </a>
-                        {% if type_k != 'artists' %}
-                        <a href="{% if item.artists.0.id %}{% url 'artist-details' idx=item.artists.0.id %}{% endif %}">
-                            <h4 class="my-3">{{ item.artists.0.name }}</h4>
-                        </a>
-                        {% else %}
+                        {% if type_k == 'artists' %}
                         <a href="{% if item.id %}{% url 'artist-details' idx=item.id %}{% endif %}">
                             <h4 class="my-3">{{ item.name }}</h4>
                         </a>
-                        {% endif %}
-                        {% if type_k != 'artists' %}
-                        <a href="{% if type_k == 'tracks' %}
-                                     {% if item.id %}{% url 'track-details' idx=item.id %}{% endif %}
-                                 {% elif type_k == 'albums' %}
-                                     {% if item.id %}{% url 'album-details' idx=item.id %}{% endif %}
-                                 {% endif %}">
-                            <p><i class="fas {% if type_k == 'tracks' %}
-                                                 fa-music
-                                             {% elif type_k == 'albums' %}
-                                                 fa-record-vinyl
-                                             {% endif %}"></i> {{ item.name }}</p>
-                        </a>
+                        {% else %}
+                          <h4 class="my-3">
+                            <a href="{% if type_k == 'tracks' %}{% if item.id %}{% url 'track-details' idx=item.id %}{% endif %}{% elif type_k == 'albums' %}{% if item.id %}{% url 'album-details' idx=item.id %}{% endif %}{% endif %}">
+                              <i class="fas {% if type_k == 'tracks' %}fa-music{% elif type_k == 'albums' %}fa-record-vinyl{% endif %}"></i> {{ item.name }}
+                            </a>
+                          </h4>
+                          <p>
+                            {% for artist in item.artists %}{% if forloop.counter0 > 0 %}, {% endif %}
+                              <a href="{% if artist.id %}{% url 'artist-details' idx=artist.id %}{% endif %}">
+                                {{ artist.name }}
+                              </a>
+                            {% endfor %}
+                          </p>                     
                         {% endif %}
                     </div>
                     {% endfor %}

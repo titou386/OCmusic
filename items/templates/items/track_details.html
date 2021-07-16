@@ -1,7 +1,7 @@
 {% extends 'homepage/base.html' %}
 {% load static %}
 {% block head %}
-<title>{{ spotify.name }} - OC Music Album</title>
+<title>{{ spotify.name }} - OC Music Titre</title>
 <style>
     header.masthead-details {
         height: 45vh;
@@ -40,6 +40,23 @@
                                 </div>
                             </div>
                             <div class="mx-auto" style="width: 300px;">
+                              <h5 class="fav-icon">
+                                {% if liked %}
+                                <form method="POST" action="{% url 'favorite-delete' item_type=item_type pk=spotify.id %}">{% csrf_token %}
+                                  <button name="submit" type="submit" class="submit-hidden">
+                                    <i class="fas fa-heart" data-toggle="tooltip" data-placement="bottom" title="Retirer de mes favoris"></i>
+                                  </button>
+                                </form>
+                                {% elif request.user.is_authenticated and spotify.id%}
+                                <form method="POST" action="{% url 'favorite-save' item_type=item_type pk=spotify.id %}">{% csrf_token %}
+                                  <button name="submit" type="submit" class="submit-hidden">
+                                    <i class="far fa-heart" data-toggle="tooltip" data-placement="bottom" title="Ajouter à mes favoris"></i>
+                                  </button>
+                                </form>
+                                {% elif spotify.id %}
+                                <a href="{% url 'sign-in' %}?next={% url 'artist-details' idx=spotify.id %}" style="color: inherit;"><i class="far fa-heart" data-toggle="tooltip" data-placement="bottom" title="Connectez-vous pour l'ajouter à vos favoris"></i></a>
+                                {% endif %}
+                              </h5>
                               {% if spotify.album.images.large %}
                                 <img class="cover img-fluid" src="{{ spotify.album.images.large }}">
                               {% else %}

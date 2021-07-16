@@ -73,12 +73,15 @@ class ItemStorage:
             Item.objects.get(idx=idx)
             return
         except Item.DoesNotExist:
-            if item_type == "track":
-                return self.update_or_create_track(spotify.get_track(idx))
-            if item_type == "album":
-                return self.update_or_create_album(spotify.get_album(idx))
-            if item_type == "artist":
-                return self.update_or_create_artist(spotify.get_artist(idx))
+            try:
+                if item_type == "track":
+                    return self.update_or_create_track(spotify.get_track(idx))
+                if item_type == "album":
+                    return self.update_or_create_album(spotify.get_album(idx))
+                if item_type == "artist":
+                    return self.update_or_create_artist(spotify.get_artist(idx))
+            except KeyError:
+                return
 
 
 class SpotifyAPI:

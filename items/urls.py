@@ -25,4 +25,14 @@ urlpatterns = [
         views.CommentCreateView.as_view(),
         name="comment-create",
     ),
+    path(
+        "<str:item_type>/<str:pk>/favorite/save/",
+        views.FavoriteSaveView.as_view(),
+        name="favorite-save",
+    ),
+    path(
+        "<str:item_type>/<str:pk>/favorite/delete/",
+        views.FavoriteDeleteView.as_view(),
+        name="favorite-delete",
+    ),
 ]

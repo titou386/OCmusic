@@ -1,0 +1,79 @@
+{% load static %}
+<section class="page-section pt-5" id="favorites">
+  <div class="container">
+    <div class="text-center">
+      <h2 class="section-heading text-uppercase">Vos favoris</h2>
+    </div>
+    <div class="row text-center text-capitalize">
+      {% if favorites %}
+        {% for item in favorites %}
+        <div class="col-md-3 portfolio-item">
+          {% if item.artist.item %}
+            <a class="portfolio-link" href="{% url 'artist-details' idx=item.idx %}">
+          {% elif item.track.item %}
+            <a class="portfolio-link" href="{% url 'track-details' idx=item.idx %}">
+          {% elif item.album.item %}
+            <a class="portfolio-link" href="{% url 'album-details' idx=item.idx %}">
+          {% endif %}                                                      
+          <div class="portfolio-hover">
+            <div class="portfolio-hover-content">
+              <i class="fas {% if item.artist.item %}fa-user{% elif item.track.item %}fa-music{% elif item.album.item %}fa-record-vinyl{% endif %} fa-3x">
+              </i>
+            </div>
+          </div>
+        {% if item.album.item %}
+          {% if item.album.large_img %}
+            <img class="cover img-fluid" src="{{ item.album.large_img }}">
+          {% else %}
+            <img class="cover img-fluid" src="{% static 'assets/img/picture-unavaible-fr.png' %}">
+          {% endif %}
+        {% elif item.track.item %}
+          {% if item.track.album.large_img %}
+            <img class="cover img-fluid" src="{{ item.track.album.large_img }}">
+          {% else %}
+            <img class="cover img-fluid" src="{% static 'assets/img/picture-unavaible-fr.png' %}">
+          {% endif %}
+        {% else %}
+          {% if item.artist.large_img %}
+            <img class="cover img-fluid" src="{{ item.artist.large_img }}">
+          {% else %}
+            <img class="cover img-fluid" src="{% static 'assets/img/picture-unavaible-fr.png' %}">
+          {% endif %}
+          </a>
+        {% endif %}
+        {% if item.artist.item %}
+          <a href="{% url 'artist-details' idx=item.idx %}">
+            <h4 class="my-3">{{ item.name }}</h4>
+          </a>
+        {% else %}
+          <a href="{% if item.track.item %}{% url 'track-details' idx=item.idx %}{% elif item.album.item %}{% url 'album-details' idx=item.idx %}{% endif %}">
+            <h4 class="my-3"><i class="fas {% if item.track.item %}fa-music{% elif item.album.item %}fa-record-vinyl{% endif %}"></i> {{ item.name }}</h4>
+          </a>
+            {% if item.album.item %}
+              <p>
+                {% for artist in item.album.compositor.all %}
+                  {% if forloop.counter0 > 0 %}, {% endif %}
+                    <a href="{% url 'artist-details' idx=artist.item.idx %}">
+                      {{ artist.item.name }}
+                    </a>
+                {% endfor %}
+              </p>
+            {% elif item.track.item %}
+              <p>
+                {% for artist in item.track.artist.all %}
+                  {% if forloop.counter0 > 0 %}, {% endif %}
+                    <a href="{% url 'artist-details' idx=artist.item.idx %}">
+                      {{ artist.item.name }}
+                    </a>
+                {% endfor %}
+              </p>
+            {% endif %}
+        {% endif %}  
+         </div>
+        {% endfor %}
+     {% else %}
+      <div>Aucun résultat</div>
+     {% endif %}
+    </div>
+  </div>
+</section>
