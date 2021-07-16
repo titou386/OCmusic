@@ -25,10 +25,17 @@
             {% for type_k, type_v in spotify.items %}
             <div class="container mb-5">
                 <div class="text-center">
-                    <h2 class="section-heading text-uppercase">{{ type_k }} :</h2>
+                    {% if type_k == 'artists' %}
+                        <h2 class="section-heading text-uppercase">Artistes :</h2>
+                    {% elif type_k == 'albums' %}
+                        <h2 class="section-heading text-uppercase">Albums :</h2>
+                    {% elif type_k == 'tracks' %}
+                        <h2 class="section-heading text-uppercase">Titres :</h2>
+                    {% endif %}
                 </div>
                 <div class="row text-center text-capitalize">
-                {% for item in type_v %}
+                  {% if type_v %}
+                    {% for item in type_v %}
                     <div class="col-md-3 portfolio-item">
                         {% if type_k == 'artists' %}
                             <a class="portfolio-link" href="{% if item.id %}{% url 'artist-details' idx=item.id %}{% endif %}">
@@ -83,7 +90,10 @@
                         </a>
                         {% endif %}
                     </div>
-                {% endfor %}
+                    {% endfor %}
+                  {% else %}
+                    <div>Aucun résultat</div>
+                  {% endif %}
                 </div>
             </div>
         {% endfor %}
