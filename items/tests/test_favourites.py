@@ -46,7 +46,7 @@ class FavoritesViewTestCase(TestCase):
         self.client.login(username="Michelle", password="1234")
 
         response = self.client.get(reverse("account"))
-        self.assertEqual(len(response.context_data["favorites"]), 0)
+        self.assertEqual(len(response.context_data["items"]), 0)
 
         response = self.client.get(
             reverse("album-details", kwargs={"idx": "6ZG5lRT77aJ3btmArcykra"})
@@ -66,7 +66,7 @@ class FavoritesViewTestCase(TestCase):
         self.assertTrue(response.context_data["liked"])
 
         response = self.client.get(reverse("account"))
-        self.assertEqual(len(response.context_data["favorites"]), 1)
+        self.assertEqual(len(response.context_data["items"]), 1)
 
         self.client.post(
             reverse(
@@ -76,7 +76,7 @@ class FavoritesViewTestCase(TestCase):
         )
 
         response = self.client.get(reverse("account"))
-        self.assertEqual(len(response.context_data["favorites"]), 0)
+        self.assertEqual(len(response.context_data["items"]), 0)
 
         response = self.client.get(
             reverse("album-details", kwargs={"idx": "6ZG5lRT77aJ3btmArcykra"})

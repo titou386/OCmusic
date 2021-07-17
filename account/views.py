@@ -10,7 +10,7 @@ from items.models import Item
 
 class IndexView(LoginRequiredMixin, ListView):
     template_name = "account/index.html"
-    context_object_name = "favorites"
+    context_object_name = "items"
     model = Item
 
     def get_queryset(self):
