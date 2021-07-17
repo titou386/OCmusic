@@ -67,17 +67,10 @@ class CommentsListView(ListView):
 class IsInYourFavorites(ListView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        try:
-            if self.request.user:
-                if (
-                    self.request.user
-                    in Item.objects.get(idx=self.kwargs["idx"]).like.all()
-                ):
-                    context["liked"] = True
-                else:
-                    context["liked"] = False
-        except Item.DoesNotExist:
-            pass
+        if self.request.user.is_authenticated:
+            context["liked"] = Item.objects.filter(idx=self.kwargs["idx"], like=self.request.user).exists()
+        else:
+            context["liked"] = False
         return context
 
 

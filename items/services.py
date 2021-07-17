@@ -36,10 +36,7 @@ class ItemStorage:
             item=self.get_or_create_item(track["id"], track["name"])
         )[0]
         if "artists" in track:
-            [
-                track_obj.artist.add(artist_obj)
-                for artist_obj in self.update_or_create_artists(track["artists"])
-            ]
+                track_obj.artist.set(self.update_or_create_artists(track["artists"]))
         if "album" in track:
             self.update_or_create_album(track["album"]).track_set.add(track_obj)
         return track_obj
@@ -151,23 +148,25 @@ class SpotifyAPI:
         """Get multiple artists from ids list."""
         endpoint = "/artists"
         r = self.requester(f"{SPOTIFY_API}{endpoint}", {"ids": ",".join(ids)})
-        if "artists" in r:
+        if "artists" in r and not 'error' in r:
             return self.artists_parser(r["artists"])
-        return []
+        return [r]
 
     def get_artist(self, idx):
         """Get an artist from an id."""
         endpoint = f"/artists/{idx}/"
         r = self.requester(f"{SPOTIFY_API}{endpoint}")
+        if 'error' in r:
+            return r
         return self.album_parser(r)
 
     def get_top_tracks(self, idx, market="FR", limit=5):
         """Get an Artist's Top Tracks."""
         endpoint = f"/artists/{idx}/top-tracks"
         r = self.requester(f"{SPOTIFY_API}{endpoint}", {"market": market})
-        if "tracks" in r:
+        if "tracks" in r and not 'error' in r:
             return self.tracks_parser(r["tracks"])[:limit]
-        return []
+        return [r]
 
     def get_discography(self, idx, include_groups="album", market="FR", limit=5):
         """Get Spotify catalog information about an artist’s albums."""
@@ -176,28 +175,32 @@ class SpotifyAPI:
             f"{SPOTIFY_API}{endpoint}",
             {"include_groups": include_groups, "market": market, "limit": limit},
         )
-        if "items" in r:
+        if "items" in r and not 'error' in r:
             return self.albums_parser(r["items"])
-        return []
+        return [r]
 
     def get_related_artists(self, idx, limit=5):
         """Get an Artist's Related Artists."""
         endpoint = f"/artists/{idx}/related-artists"
         r = self.requester(f"{SPOTIFY_API}{endpoint}")
-        if "artists" in r:
+        if "artists" in r and not 'error' in r:
             return self.artists_parser(r["artists"])[:limit]
-        return []
+        return [r]
 
     def get_track(self, idx, market="FR"):
         """Get a track from an id."""
         endpoint = f"/tracks/{idx}"
         r = self.requester(f"{SPOTIFY_API}{endpoint}")
+        if 'error' in r:
+            return r
         return self.track_parser(r)
 
     def get_album(self, idx, market="FR"):
         """Get an album form an id."""
         endpoint = f"/albums/{idx}"
         r = self.requester(f"{SPOTIFY_API}{endpoint}")
+        if 'error' in r:
+            return r
         return self.album_parser(r)
 
     def artists_parser(self, data):
@@ -297,5 +300,4 @@ class SpotifyAPI:
         except ConnectionError as e:
             logging.error(e)
             return {"error": "no connection"}
-
         return r.json()
