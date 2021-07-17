@@ -36,7 +36,7 @@ class ItemStorage:
             item=self.get_or_create_item(track["id"], track["name"])
         )[0]
         if "artists" in track:
-                track_obj.artist.set(self.update_or_create_artists(track["artists"]))
+            track_obj.artist.set(self.update_or_create_artists(track["artists"]))
         if "album" in track:
             self.update_or_create_album(track["album"]).track_set.add(track_obj)
         return track_obj
@@ -148,7 +148,7 @@ class SpotifyAPI:
         """Get multiple artists from ids list."""
         endpoint = "/artists"
         r = self.requester(f"{SPOTIFY_API}{endpoint}", {"ids": ",".join(ids)})
-        if "artists" in r and not 'error' in r:
+        if "artists" in r and "error" not in r:
             return self.artists_parser(r["artists"])
         return [r]
 
@@ -156,7 +156,7 @@ class SpotifyAPI:
         """Get an artist from an id."""
         endpoint = f"/artists/{idx}/"
         r = self.requester(f"{SPOTIFY_API}{endpoint}")
-        if 'error' in r:
+        if "error" in r:
             return r
         return self.album_parser(r)
 
@@ -164,7 +164,7 @@ class SpotifyAPI:
         """Get an Artist's Top Tracks."""
         endpoint = f"/artists/{idx}/top-tracks"
         r = self.requester(f"{SPOTIFY_API}{endpoint}", {"market": market})
-        if "tracks" in r and not 'error' in r:
+        if "tracks" in r and "error" not in r:
             return self.tracks_parser(r["tracks"])[:limit]
         return [r]
 
@@ -175,7 +175,7 @@ class SpotifyAPI:
             f"{SPOTIFY_API}{endpoint}",
             {"include_groups": include_groups, "market": market, "limit": limit},
         )
-        if "items" in r and not 'error' in r:
+        if "items" in r and "error" not in r:
             return self.albums_parser(r["items"])
         return [r]
 
@@ -183,7 +183,7 @@ class SpotifyAPI:
         """Get an Artist's Related Artists."""
         endpoint = f"/artists/{idx}/related-artists"
         r = self.requester(f"{SPOTIFY_API}{endpoint}")
-        if "artists" in r and not 'error' in r:
+        if "artists" in r and "error" not in r:
             return self.artists_parser(r["artists"])[:limit]
         return [r]
 
@@ -191,7 +191,7 @@ class SpotifyAPI:
         """Get a track from an id."""
         endpoint = f"/tracks/{idx}"
         r = self.requester(f"{SPOTIFY_API}{endpoint}")
-        if 'error' in r:
+        if "error" in r:
             return r
         return self.track_parser(r)
 
@@ -199,7 +199,7 @@ class SpotifyAPI:
         """Get an album form an id."""
         endpoint = f"/albums/{idx}"
         r = self.requester(f"{SPOTIFY_API}{endpoint}")
-        if 'error' in r:
+        if "error" in r:
             return r
         return self.album_parser(r)
 

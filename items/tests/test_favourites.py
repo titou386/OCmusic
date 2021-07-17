@@ -28,7 +28,12 @@ class FavoritesViewTestCase(TestCase):
         return_value=json.loads(open("items/tests/album.json").read()),
     )
     def test_redirect_from_visitor_making_a_favorite(self, *args):
-        response = self.client.post(reverse('favorite-save', kwargs={"pk": "6ZG5lRT77aJ3btmArcykra", "item_type": "album"}))
+        response = self.client.post(
+            reverse(
+                "favorite-save",
+                kwargs={"pk": "6ZG5lRT77aJ3btmArcykra", "item_type": "album"},
+            )
+        )
         self.assertEqual(response.status_code, 302)
         self
 
@@ -41,23 +46,39 @@ class FavoritesViewTestCase(TestCase):
         self.client.login(username="Michelle", password="1234")
 
         response = self.client.get(reverse("account"))
-        self.assertEqual(len(response.context_data['favorites']), 0)
+        self.assertEqual(len(response.context_data["favorites"]), 0)
 
-        response = self.client.get(reverse("album-details", kwargs={"idx": "6ZG5lRT77aJ3btmArcykra"}))
-        self.assertFalse(response.context_data['liked'])
+        response = self.client.get(
+            reverse("album-details", kwargs={"idx": "6ZG5lRT77aJ3btmArcykra"})
+        )
+        self.assertFalse(response.context_data["liked"])
 
-        self.client.post(reverse('favorite-save', kwargs={"pk": "6ZG5lRT77aJ3btmArcykra", "item_type": "album"}))
+        self.client.post(
+            reverse(
+                "favorite-save",
+                kwargs={"pk": "6ZG5lRT77aJ3btmArcykra", "item_type": "album"},
+            )
+        )
 
-        response = self.client.get(reverse("album-details", kwargs={"idx": "6ZG5lRT77aJ3btmArcykra"}))
-        self.assertTrue(response.context_data['liked'])
+        response = self.client.get(
+            reverse("album-details", kwargs={"idx": "6ZG5lRT77aJ3btmArcykra"})
+        )
+        self.assertTrue(response.context_data["liked"])
 
         response = self.client.get(reverse("account"))
-        self.assertEqual(len(response.context_data['favorites']), 1)
+        self.assertEqual(len(response.context_data["favorites"]), 1)
 
-        self.client.post(reverse('favorite-delete', kwargs={"pk": "6ZG5lRT77aJ3btmArcykra", "item_type": "album"}))
+        self.client.post(
+            reverse(
+                "favorite-delete",
+                kwargs={"pk": "6ZG5lRT77aJ3btmArcykra", "item_type": "album"},
+            )
+        )
 
         response = self.client.get(reverse("account"))
-        self.assertEqual(len(response.context_data['favorites']), 0)
+        self.assertEqual(len(response.context_data["favorites"]), 0)
 
-        response = self.client.get(reverse("album-details", kwargs={"idx": "6ZG5lRT77aJ3btmArcykra"}))
-        self.assertFalse(response.context_data['liked'])
+        response = self.client.get(
+            reverse("album-details", kwargs={"idx": "6ZG5lRT77aJ3btmArcykra"})
+        )
+        self.assertFalse(response.context_data["liked"])
