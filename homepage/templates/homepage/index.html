@@ -164,17 +164,20 @@
                             </div>
                         </div>
                     </div>
-                    
+
                     <div class="d-none" id="submitSuccessMessage">
                         <div class="text-center text-white mb-3">
-                            <div class="fw-bolder">Message envoyé!</div>
+                            <div class="fw-bolder">Message envoyé!</div> 
                         </div>
                     </div>
-                    
+
                     <div class="d-none" id="submitErrorMessage"><div class="text-center text-danger mb-3">Echec de l'envoi</div></div>
                     
                     <div class="text-center"><button class="btn btn-primary btn-xl text-uppercase" id="submitButton" type="submit">Envoyer</button></div>
                 </form>
             </div>
         </section>
+{% endblock %}
+{% block script %}
+<script src="{% static 'js/contact_form.js' %}"></script>
 {% endblock %}

@@ -25,11 +25,6 @@ class SaveContactFormView(CreateView):
     success_url = reverse_lazy('index')
 
     def form_valid(self, form):
+        # Not implemented for confidentiality issue
         form.instance.ip = '127.0.0.1'
         return super().form_valid(form)
-
-#    def post(self, request, *args, **kwargs):
-#        self.object = self.get_object()
-#        context = self.get_context_data(object=self.object)
-#        return super().post(request, *args, **kwargs)
-

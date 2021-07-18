@@ -122,9 +122,9 @@ class TrackDetailsView(Spotify, CommentsListView, IsInYourFavorites):
 
 
 class CommentCreateView(LoginRequiredMixin, Spotify, CreateView):
+    http_method_names = ['post']
     model = Comment
     fields = ["text"]
-    http_method_names = ['post']
 
     def setup(self, request, *args, **kwargs):
         if not ItemStorage().create(self.spotify, kwargs["item_type"], kwargs["idx"]):
@@ -157,10 +157,6 @@ class CommentCreateView(LoginRequiredMixin, Spotify, CreateView):
 
 
 class FavoritesEditView(LoginRequiredMixin, UpdateView):
-    http_method_names = ['post']
-    model = Item
-    fields = []
-
     def get_success_url(self):
         if self.kwargs["item_type"] == "artist":
             return reverse_lazy("artist-details", kwargs={"idx": self.kwargs["pk"]})
@@ -173,6 +169,10 @@ class FavoritesEditView(LoginRequiredMixin, UpdateView):
 
 
 class FavoriteSaveView(Spotify, FavoritesEditView):
+    http_method_names = ['post']
+    model = Item
+    fields = []
+
     def setup(self, request, *args, **kwargs):
         if not ItemStorage().create(self.spotify, kwargs["item_type"], kwargs["pk"]):
             redirect(reverse_lazy("index"))
@@ -184,6 +184,10 @@ class FavoriteSaveView(Spotify, FavoritesEditView):
 
 
 class FavoriteDeleteView(FavoritesEditView):
+    http_method_names = ['post']
+    model = Item
+    fields = []
+
     def form_valid(self, form):
         form.instance.like.remove(self.request.user)
         return super().form_valid(form)
