@@ -1,6 +1,1 @@
-Django==3.2.4
-flake8
-psycopg2-binary
-requests
-requests-mock
-selenium==3.141.0
+-r requirements/heroku.txt

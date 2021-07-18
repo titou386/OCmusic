@@ -1,0 +1,5 @@
+-r common.txt
+
+flake8
+requests-mock
+selenium==3.141.0
