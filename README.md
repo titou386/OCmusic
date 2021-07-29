@@ -4,6 +4,7 @@ Let's talk about music ...
 [![Build Status](https://travis-ci.com/titou386/OCmusic.svg?branch=main)](https://travis-ci.com/github/titou386/OCmusic)
 
 OCMusic is a music chatting web application based on Django framework.
+[Demo site](https://ocmusic.herokuapp.com/)
 
 ## Features
 - Free account creation
