@@ -270,6 +270,7 @@ class SpotifyAPI:
         return track_dict
 
     def images_parser(self, img_lst):
+        """Extract images url."""
         lower_limit = 200
         upper_limit = 450
         img_dict = {"large": "", "medium": "", "small": ""}
