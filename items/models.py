@@ -4,7 +4,7 @@ from account.models import User
 
 class SpotifySession(models.Model):
     client_id = models.CharField(max_length=32, primary_key=True)
-    access_token = models.CharField(max_length=100, null=True, blank=True)
+    access_token = models.CharField(max_length=250, null=True, blank=True)
     token_type = models.CharField(max_length=10, null=True, blank=True)
     token_expires = models.DateTimeField(auto_now=True)
 
